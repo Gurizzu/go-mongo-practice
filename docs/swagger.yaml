@@ -1,0 +1,146 @@
+definitions:
+  models.CreateNote:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  models.Note:
+    properties:
+      created_at:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      note_id:
+        type: string
+      title:
+        type: string
+      updated_At:
+        type: integer
+    required:
+    - description
+    - title
+    type: object
+host: localhost:2005
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /notes/create:
+    post:
+      consumes:
+      - application/json
+      description: create notes
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateNote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Note'
+      summary: Create notes
+      tags:
+      - Notes
+  /notes/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete the note
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Delete note
+      tags:
+      - Notes
+  /notes/get_note/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get note
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Note'
+      summary: get note
+      tags:
+      - Notes
+  /notes/get_notes:
+    get:
+      consumes:
+      - application/json
+      description: get notes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Note'
+      summary: get all notes
+      tags:
+      - Notes
+  /notes/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update note
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateNote'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Note'
+      summary: Update Notes
+      tags:
+      - Notes
+swagger: "2.0"
