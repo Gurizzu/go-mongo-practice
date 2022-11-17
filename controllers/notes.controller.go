@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go-mongo-practice/database"
 	"go-mongo-practice/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +14,6 @@ import (
 )
 
 var dbCollection *mongo.Collection = database.OpenCollection(database.Client, "notes")
-var validate = validator.New()
 
 // CreateNotes godoc
 // @Summary      Create notes
@@ -24,11 +23,18 @@ var validate = validator.New()
 // @Produce      json
 // @Param request body models.CreateNote true "query params"
 // @Success      200  {object}  models.Note
-// @Router       /notes/create [post]
+// @Router       /api/notes/create [post]
+// @securityDefinitions.apiKey token
+// @in header
+// @name Authorization
+// @Security JWT
 func CreateNotes() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var note models.Note
+		userInfo := c.GetString("user")
+		fmt.Println(userInfo)
+		defer cancel()
 
 		if err := c.BindJSON(&note); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -37,7 +43,7 @@ func CreateNotes() gin.HandlerFunc {
 
 		validationErr := validate.Struct(note)
 		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "validationErr.Error()"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
 			return
 		}
 
@@ -45,6 +51,7 @@ func CreateNotes() gin.HandlerFunc {
 		note.Updated_at = time.Now().Local().Unix()
 		note.ID = primitive.NewObjectID()
 		note.Note_id = note.ID.Hex()
+		note.Author = models.NoteAuthor{c.GetString("uid"), c.GetString("email")}
 
 		_, err := dbCollection.InsertOne(ctx, note)
 		defer cancel()
@@ -62,10 +69,14 @@ func CreateNotes() gin.HandlerFunc {
 // @Description  get note
 // @Tags         Notes
 // @Accept       json
-// @Param        id   path      string  true  "Account ID"
+// @Param        id   path      string  true  "Note ID"
 // @Produce      json
 // @Success      200  {object}  models.Note
-// @Router       /notes/get_note/{id} [get]
+// @Router       /api/notes/get_note/{id} [get]
+// @securityDefinitions.apiKey token
+// @in header
+// @name Authorization
+// @Security JWT
 func GetNote() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -87,10 +98,13 @@ func GetNote() gin.HandlerFunc {
 // @Summary      get all notes
 // @Description  get notes
 // @Tags         Notes
-// @Accept       json
 // @Produce      json
 // @Success      200  {object}  models.Note
-// @Router       /notes/get_notes [get]
+// @Router       /api/notes/get_notes [get]
+// @securityDefinitions.apiKey token
+// @in header
+// @name Authorization
+// @Security JWT
 func GetNotes() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -123,11 +137,15 @@ func GetNotes() gin.HandlerFunc {
 // @Description  update note
 // @Tags         Notes
 // @Accept       json
-// @Param        id   path      string  true  "Account ID"
+// @Param        id   path      string  true  "Note ID"
 // @Param request body models.CreateNote true "query params"
 // @Produce      json
 // @Success      200  {object}  models.Note
-// @Router       /notes/update/{id} [put]
+// @Router       /api/notes/update/{id} [put]
+// @securityDefinitions.apiKey token
+// @in header
+// @name Authorization
+// @Security JWT
 func UpdateNotes() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -179,15 +197,20 @@ func UpdateNotes() gin.HandlerFunc {
 // @Description  delete the note
 // @Tags         Notes
 // @Accept       json
-// @Param        id   path      string  true  "Account ID"
+// @Param        id   path      string  true  "Note ID"
 // @Produce      json
 // @Success      200              {string}  string    "ok"
-// @Router       /notes/delete/{id} [delete]
+// @Router       /api/notes/delete/{id} [delete]
+// @securityDefinitions.apiKey token
+// @in header
+// @name Authorization
+// @Security JWT
 func DeleteNotes() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		notesId := c.Param("notes_id")
+
 		var noteFind models.Note
 		defer cancel()
 
@@ -202,6 +225,7 @@ func DeleteNotes() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		_, err = CommentCollection.DeleteMany(ctx, bson.M{"note_id": bson.M{"$eq": notesId}})
 
 	}
 }

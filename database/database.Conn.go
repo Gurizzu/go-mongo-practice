@@ -11,7 +11,7 @@ import (
 
 func DBinstance() *mongo.Client {
 
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:3000/"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,6 +32,6 @@ func DBinstance() *mongo.Client {
 var Client *mongo.Client = DBinstance()
 
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	var collection *mongo.Collection = client.Database("golang-mongo").Collection(collectionName)
+	var collection *mongo.Collection = client.Database("Tanyaa").Collection(collectionName)
 	return collection
 }

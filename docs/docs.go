@@ -20,8 +20,238 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/notes/create": {
+        "/api/comment/create/{id}": {
             "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "answer note",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "answer Notes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Note ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CommentModels"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Note"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/comment/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "delete the comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Delete comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/comment/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "get comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "get comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Comment"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/comment/get_all": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "get Comment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "get all comment",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Comment"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/comment/get_all_by_notes/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "get Comment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "get all comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comment by note ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Comment"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/comment/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "update Comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Update Comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CommentModels"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Comment"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/notes/create": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "create notes",
                 "consumes": [
                     "application/json"
@@ -54,8 +284,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/delete/{id}": {
+        "/api/notes/delete/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "delete the note",
                 "consumes": [
                     "application/json"
@@ -70,7 +305,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Account ID",
+                        "description": "Note ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -86,8 +321,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/get_note/{id}": {
+        "/api/notes/get_note/{id}": {
             "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "get note",
                 "consumes": [
                     "application/json"
@@ -102,7 +342,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Account ID",
+                        "description": "Note ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -118,12 +358,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/get_notes": {
+        "/api/notes/get_notes": {
             "get": {
-                "description": "get notes",
-                "consumes": [
-                    "application/json"
+                "security": [
+                    {
+                        "JWT": []
+                    }
                 ],
+                "description": "get notes",
                 "produces": [
                     "application/json"
                 ],
@@ -141,8 +383,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/notes/update/{id}": {
+        "/api/notes/update/{id}": {
             "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
                 "description": "update note",
                 "consumes": [
                     "application/json"
@@ -157,7 +404,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Account ID",
+                        "description": "Note ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -181,9 +428,267 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/user/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Delete account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "create account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/get_all": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "create account",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "create account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/signup": {
+            "post": {
+                "description": "create account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "create account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserUpdate"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.Comment": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "author": {
+                    "$ref": "#/definitions/models.CommentAuthor"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "note_id": {
+                    "type": "string"
+                },
+                "updated_At": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CommentAuthor": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CommentModels": {
+            "type": "object",
+            "required": [
+                "answer"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreateNote": {
             "type": "object",
             "required": [
@@ -199,6 +704,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreateUser": {
+            "type": "object",
+            "required": [
+                "Password",
+                "email",
+                "first_name",
+                "last_name",
+                "phone"
+            ],
+            "properties": {
+                "Password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 2
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 2
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Note": {
             "type": "object",
             "required": [
@@ -206,6 +743,9 @@ const docTemplate = `{
                 "title"
             ],
             "properties": {
+                "author": {
+                    "$ref": "#/definitions/models.NoteAuthor"
+                },
                 "created_at": {
                     "type": "integer"
                 },
@@ -225,6 +765,124 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "models.NoteAuthor": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "required": [
+                "Password",
+                "email",
+                "first_name",
+                "last_name",
+                "phone"
+            ],
+            "properties": {
+                "Password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 2
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 2
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "user_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLogin": {
+            "type": "object",
+            "required": [
+                "Password",
+                "email"
+            ],
+            "properties": {
+                "Password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserRes": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserUpdate": {
+            "type": "object",
+            "properties": {
+                "Password": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
         }
     }
 }`
@@ -235,7 +893,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:2005",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Swagger Example API",
+	Title:            "Tanyaa Project",
 	Description:      "This is a sample server celler server.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

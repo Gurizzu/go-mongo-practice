@@ -1,4 +1,33 @@
 definitions:
+  models.Comment:
+    properties:
+      answer:
+        type: string
+      author:
+        $ref: '#/definitions/models.CommentAuthor'
+      created_at:
+        type: integer
+      id:
+        type: string
+      note_id:
+        type: string
+      updated_At:
+        type: integer
+    type: object
+  models.CommentAuthor:
+    properties:
+      email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.CommentModels:
+    properties:
+      answer:
+        type: string
+    required:
+    - answer
+    type: object
   models.CreateNote:
     properties:
       description:
@@ -9,8 +38,34 @@ definitions:
     - description
     - title
     type: object
+  models.CreateUser:
+    properties:
+      Password:
+        minLength: 6
+        type: string
+      email:
+        type: string
+      first_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      last_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      phone:
+        type: string
+    required:
+    - Password
+    - email
+    - first_name
+    - last_name
+    - phone
+    type: object
   models.Note:
     properties:
+      author:
+        $ref: '#/definitions/models.NoteAuthor'
       created_at:
         type: integer
       description:
@@ -27,6 +82,82 @@ definitions:
     - description
     - title
     type: object
+  models.NoteAuthor:
+    properties:
+      email:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.User:
+    properties:
+      Password:
+        minLength: 6
+        type: string
+      created_at:
+        type: integer
+      email:
+        type: string
+      first_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      id:
+        type: string
+      last_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      phone:
+        type: string
+      refresh_token:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: integer
+      user_id:
+        type: string
+      user_type:
+        type: string
+    required:
+    - Password
+    - email
+    - first_name
+    - last_name
+    - phone
+    type: object
+  models.UserLogin:
+    properties:
+      Password:
+        minLength: 6
+        type: string
+      email:
+        type: string
+    required:
+    - Password
+    - email
+    type: object
+  models.UserRes:
+    properties:
+      refresh_token:
+        type: string
+      token:
+        type: string
+    type: object
+  models.UserUpdate:
+    properties:
+      Password:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+    type: object
 host: localhost:2005
 info:
   contact: {}
@@ -34,10 +165,150 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Swagger Example API
+  title: Tanyaa Project
   version: "1.0"
 paths:
-  /notes/create:
+  /api/comment/create/{id}:
+    post:
+      consumes:
+      - application/json
+      description: answer note
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentModels'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Note'
+      security:
+      - JWT: []
+      summary: answer Notes
+      tags:
+      - Comment
+  /api/comment/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete the comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - JWT: []
+      summary: Delete comment
+      tags:
+      - Comment
+  /api/comment/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Comment'
+      security:
+      - JWT: []
+      summary: get comment
+      tags:
+      - Comment
+  /api/comment/get_all:
+    get:
+      description: get Comment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Comment'
+      security:
+      - JWT: []
+      summary: get all comment
+      tags:
+      - Comment
+  /api/comment/get_all_by_notes/{id}:
+    get:
+      description: get Comment
+      parameters:
+      - description: Comment by note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Comment'
+      security:
+      - JWT: []
+      summary: get all comment
+      tags:
+      - Comment
+  /api/comment/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update Comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentModels'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Comment'
+      security:
+      - JWT: []
+      summary: Update Comment
+      tags:
+      - Comment
+  /api/notes/create:
     post:
       consumes:
       - application/json
@@ -56,16 +327,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Note'
+      security:
+      - JWT: []
       summary: Create notes
       tags:
       - Notes
-  /notes/delete/{id}:
+  /api/notes/delete/{id}:
     delete:
       consumes:
       - application/json
       description: delete the note
       parameters:
-      - description: Account ID
+      - description: Note ID
         in: path
         name: id
         required: true
@@ -77,16 +350,18 @@ paths:
           description: ok
           schema:
             type: string
+      security:
+      - JWT: []
       summary: Delete note
       tags:
       - Notes
-  /notes/get_note/{id}:
+  /api/notes/get_note/{id}:
     get:
       consumes:
       - application/json
       description: get note
       parameters:
-      - description: Account ID
+      - description: Note ID
         in: path
         name: id
         required: true
@@ -98,13 +373,13 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Note'
+      security:
+      - JWT: []
       summary: get note
       tags:
       - Notes
-  /notes/get_notes:
+  /api/notes/get_notes:
     get:
-      consumes:
-      - application/json
       description: get notes
       produces:
       - application/json
@@ -113,16 +388,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Note'
+      security:
+      - JWT: []
       summary: get all notes
       tags:
       - Notes
-  /notes/update/{id}:
+  /api/notes/update/{id}:
     put:
       consumes:
       - application/json
       description: update note
       parameters:
-      - description: Account ID
+      - description: Note ID
         in: path
         name: id
         required: true
@@ -140,7 +417,148 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Note'
+      security:
+      - JWT: []
       summary: Update Notes
       tags:
       - Notes
+  /api/user/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - JWT: []
+      summary: Delete user
+      tags:
+      - Users
+  /api/user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - JWT: []
+      summary: Register
+      tags:
+      - Users
+  /api/user/get_all:
+    get:
+      description: create account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - JWT: []
+      summary: Register
+      tags:
+      - Users
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserRes'
+      summary: Register
+      tags:
+      - Authentication
+  /api/user/signup:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserRes'
+      summary: Register
+      tags:
+      - Authentication
+  /api/user/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserUpdate'
+      security:
+      - JWT: []
+      summary: Register
+      tags:
+      - Users
+securityDefinitions:
+  JWT:
+    in: header
+    name: token
+    type: apiKey
 swagger: "2.0"
